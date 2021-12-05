@@ -15,6 +15,7 @@ long pageSize = -1; // Page size
 
 inline static int close_(int i) { return close(i); }
 
+// Open file and determine the size
 FileMapBase::FileMapBase(const std::string &filename, int flags) {
     if(pageSize < 0)
         pageSize = sysconf(_SC_PAGESIZE); // Get page size from the OS
@@ -27,6 +28,7 @@ FileMapBase::FileMapBase(const std::string &filename, int flags) {
     st_size_ = statbuf.st_size;
 }
 
+// Close file handler
 void FileMapBase::close() {
     int return_value = close_(file_id_);
     file_id_ = -1;
@@ -35,7 +37,7 @@ void FileMapBase::close() {
 }
 
 FileMapBase::~FileMapBase() {
-    // Had to call close before destructor (avoid exception in destructor)
+    // Had to call close before the destructor (avoid exception in destructor)
     assert(file_id_ < 0);
 }
 
@@ -43,7 +45,8 @@ FileMapRead::FileMapRead(const std::string &filename) : FileMapBase(filename, O_
     if(st_size_ == 0)
         return; // No contents in the file
     chunk_size_ = pageSize; // The allocation size is a multiple of the page size
-    // We read the files by blocks of at least 64KB
+    // Start with the smallest amount of data (one page or two):
+    // avoid loading large chunks of data if %%EOF is near the end
     if(st_size_ <= chunk_size_)
         bottom_position_ = 0;
     else {
@@ -55,18 +58,25 @@ FileMapRead::FileMapRead(const std::string &filename) : FileMapBase(filename, O_
     map_();
 }
 
+// Utility function for unmapping and error handling
 void FileMapRead::unmap_() {
+    // Accelerate memory freeing from the OS
+    madvise(bottom_ptr_, allocated_size_, MADV_DONTNEED);
     if(munmap(bottom_ptr_, allocated_size_) < 0)
         throw std::system_error(errno, std::generic_category());
 }
 
+// Utility function for mapping into memory and error handling
 void FileMapRead::map_() {
-    bottom_ptr_ = (char *) mmap(nullptr, allocated_size_, PROT_READ, MAP_PRIVATE | MAP_POPULATE, file_id_, bottom_position_);
+    bottom_ptr_ = (char *) mmap(nullptr, allocated_size_, PROT_READ, MAP_PRIVATE, file_id_, bottom_position_);
     if(bottom_ptr_ == MAP_FAILED)
         throw std::system_error(errno, std::generic_category());
+    // Indicate to the OS to preload the chunk into memory (non blocking call)
+    madvise(bottom_ptr_, allocated_size_, MADV_WILLNEED);
     top_ptr_ = bottom_ptr_ + allocated_size_;
 }
 
+// Load the next block of the file into memory
 int FileMapRead::load_next_block() {
     if(bottom_position_ == 0) {
         if(bottom_ptr_) {
@@ -77,7 +87,9 @@ int FileMapRead::load_next_block() {
         return 0; // End of File
     }
     unmap_();
-    if(chunk_size_ < 1'000'000) // Increase the chunk size (UP to 1 MB of memory)
+    // Increase progressively the chunk size (UP to 1 MB of memory)
+    // Bigger chunk are better for readling large file without a %%EOF
+    if(chunk_size_ < 1'000'000)
         chunk_size_ *= 2;
     long new_bottom = std::min(((bottom_position_ - chunk_size_)/pageSize)*pageSize, 0l);
     allocated_size_ = bottom_position_ - new_bottom;

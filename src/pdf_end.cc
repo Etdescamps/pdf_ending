@@ -20,7 +20,10 @@ int64_t find_offset(FMap::FileMapRead &pdfFile) {
             ++pos;
         else if (pos > &revert_trailer[0]) {
             pos = &revert_trailer[0];
-            continue; // Reevaluate the iteration looking for 'F'
+            // Reevaluate the iteration looking for 'F'
+            // No need to go back because F is only present at the end of the string
+            // No other F could have initiated another FOE%% sequence within this sequence
+            continue;
         }
         --top; // 
         if(top <= bottom) {

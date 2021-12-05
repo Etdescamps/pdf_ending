@@ -7,6 +7,7 @@ namespace FMap {
 
 using std::string;
 
+// Base class that contains
 class FileMapBase {
     public:
         FileMapBase(const std::string &filename, int flags);
