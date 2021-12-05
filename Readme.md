@@ -38,6 +38,7 @@ Trouver la chaîne à partir de la fin peut être décrit par un simple automate
 
 Le seul élément posant problème dans cet automate est le retour à l'état début où F suivant la lettre lue.
 La solution est de garder la dernière lettre lue et de revenir au début pour analyser à nouveau la lettre F.
+Pour le reste, le parcours se fait en temps linéaire O(n) sans avoir besoin de revenir en arrière.
 
 
 
