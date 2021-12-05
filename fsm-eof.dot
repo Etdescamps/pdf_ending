@@ -1,0 +1,31 @@
+digraph fsm_eof {
+  rankdir=LR;
+  size="8,5";
+
+  node [shape = doublecircle]; S [ label = "fin" ];
+  node [shape = point]; qi;
+
+  node [shape = circle];
+  debut [ label = "début" ];
+  edge [ weight=4 ];
+  qi -> debut;
+  debut -> F [ label = "F" ];
+  F -> E [ label = "E" ];
+  E -> O [ label = "O" ];
+  O -> "p1" [ label = "%" ];
+  "p1" -> "p2" [ label = "%" ];
+  "p2" -> S [ label = "\\n|\\r" ];
+  edge [ weight=0.5 ];
+  debut -> debut [ label = "*"];
+  F -> debut [ label = "*"];
+  F -> F [ label = "F"];
+  E -> debut [ label = "*"];
+  E -> F [ label = "F"];
+  O -> debut [ label = "*"];
+  O -> F [ label = "F"];
+  "p1" -> debut [ label = "*"];
+  "p1" -> F [ label = "F"];
+  "p2" -> debut [ label = "*"];
+  "p2" -> F [ label = "F"];
+}
+

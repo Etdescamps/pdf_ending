@@ -1,0 +1,9 @@
+.*.swp
+*.o
+*.gch
+build/
+bazel-bin
+bazel-out
+bazel-pdf_ending
+bazel-testlogs
+.vscode
