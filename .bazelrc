@@ -1,0 +1,6 @@
+build --cxxopt='-std=c++14'
+
+build:debug -c dbg
+build:debug --copt="-g"
+build:debug --strip="never"
+build:opt --copt="-O3"
