@@ -7,6 +7,7 @@
 #include <cerrno>
 #include <unistd.h>
 #include <algorithm>
+#include <iostream>
 #include "file_map.hh"
 
 namespace FMap {
@@ -38,7 +39,14 @@ void FileMapBase::close() {
 
 FileMapBase::~FileMapBase() {
     // Had to call close before the destructor (avoid exception in destructor)
-    assert(file_id_ < 0);
+    try {
+        if(file_id_ >= 0)
+            close();
+    }
+    catch(const std::exception &e) {
+        std::cerr << "Error while closing file with destructor" << std::endl;
+        assert(file_id_ < 0);
+    }
 }
 
 FileMapRead::FileMapRead(const std::string &filename) : FileMapBase(filename, O_RDONLY) {

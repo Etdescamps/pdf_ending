@@ -1,5 +1,5 @@
 #include <iostream>
-#include "file_map.hh"
+#include "src/file_map.hh"
 
 int64_t find_offset(FMap::FileMapRead &pdfFile) {
     const char revert_trailer[] = "FOE%%";
@@ -28,7 +28,7 @@ int64_t find_offset(FMap::FileMapRead &pdfFile) {
             continue;
         }
         --top; // 
-        if(top <= bottom) {
+        if(top < bottom) {
             if(pdfFile.load_next_block() == 0)
                 return -1; // Begin of the file: no occurences
             top = pdfFile.get_top(); --top;
