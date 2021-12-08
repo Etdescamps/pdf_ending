@@ -76,6 +76,7 @@ void FileMapRead::unmap_() {
 
 // Utility function for mapping into memory and error handling
 void FileMapRead::map_() {
+    assert(allocated_size_ < 2'000'000); // Test if no big chunk are used
     bottom_ptr_ = (char *) mmap(nullptr, allocated_size_, PROT_READ, MAP_PRIVATE, file_id_, bottom_position_);
     if(bottom_ptr_ == MAP_FAILED)
         throw std::system_error(errno, std::generic_category());

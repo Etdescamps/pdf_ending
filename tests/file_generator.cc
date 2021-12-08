@@ -19,6 +19,7 @@ void create_randomfile(const std::string &filename, size_t size, int64_t offset)
 int main(int argc, char **argv) {
     if(argc < 4) {
         std::cerr << "Usage: " << argv[0] << " filename size offset" << std::endl;
+        std::cerr << "offset at -1 if no offset string" << std::endl;
         return 1;
     }
     char *argvend;

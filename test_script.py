@@ -37,8 +37,17 @@ nb_test = rd_test.test_filepdf(65532, 16025)
 nb_test = rd_test.test_filepdf(65532, 16025)
 nb_test = rd_test.test_filepdf(8198, 8188)
 nb_test = rd_test.test_filepdf(8198, 4093)
+nb_test = rd_test.test_filepdf(8198, -1)
+nb_test = rd_test.test_filepdf(6144, -1)
+nb_test = rd_test.test_filepdf(6144, 6100)
+nb_test = rd_test.test_filepdf(6144, 4093)
+nb_test = rd_test.test_filepdf(6144, 1)
 nb_test = rd_test.test_filepdf(8193, 4094)
 nb_test = rd_test.test_filepdf(4096, 4089)
 nb_test = rd_test.test_filepdf(512, 504)
+
+# Test with a big file
+nb_test = rd_test.test_filepdf(2000000000, 1000000000)
+nb_test = rd_test.test_filepdf(2000000000, -1)
 rd_test.print()
 
