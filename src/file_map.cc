@@ -95,10 +95,12 @@ int FileMapRead::load_next_block() {
     allocated_size_ = bottom_position_ - new_bottom;
     bottom_position_ = new_bottom;
     map_();
+#if _POSIX_C_SOURCE >= 200112L
+    // Preload next block (not available on all posix systems)
     new_bottom = std::max(((bottom_position_ - chunk_size_)/pageSize)*pageSize, 0l);
-    // Preload next block
     if(new_bottom < bottom_position_)
         posix_fadvise(file_id_, new_bottom, bottom_position_ - new_bottom, POSIX_FADV_WILLNEED);
+#endif
     return 1;
 }
 
