@@ -4,8 +4,10 @@
 int64_t find_offset(FMap::FileMapRead &pdfFile) {
     const char revert_trailer[] = "FOE%%";
     const char *pos = &revert_trailer[0];
-    const char *top = pdfFile.get_top() - 1;
     const char *bottom = pdfFile.get_bottom();
+    if(!bottom)
+        return -1; // Empty file
+    const char *top = pdfFile.get_top() - 1;
     while(true) {
         if(*pos == 0) {
             // We got a complete "%%EOF"
