@@ -50,7 +50,7 @@ FileMapRead::FileMapRead(const std::string &filename) : FileMapBase(filename, O_
     if(st_size_ <= chunk_size_)
         bottom_position_ = 0;
     else {
-        bottom_position_ = ((st_size_ - chunk_size_)/pageSize)*pageSize;
+        bottom_position_ = (st_size_/pageSize)*pageSize;
         if(st_size_ - bottom_position_ < 30) // load at least 30 bytes from the file
             bottom_position_ -= pageSize;
     }
@@ -91,7 +91,7 @@ int FileMapRead::load_next_block() {
     // Bigger chunk are better for readling large file without a %%EOF
     if(chunk_size_ < 1'000'000)
         chunk_size_ *= 2;
-    long new_bottom = std::min(((bottom_position_ - chunk_size_)/pageSize)*pageSize, 0l);
+    long new_bottom = std::max(((bottom_position_ - chunk_size_)/pageSize)*pageSize, 0l);
     allocated_size_ = bottom_position_ - new_bottom;
     bottom_position_ = new_bottom;
     map_();
