@@ -98,7 +98,7 @@ int FileMapRead::load_next_block() {
     new_bottom = std::max(((bottom_position_ - chunk_size_)/pageSize)*pageSize, 0l);
     // Preload next block
     if(new_bottom < bottom_position_)
-        posix_fadvise(file_id_, new_bottom, bottom_position_ - new_bottom, MADV_WILLNEED);
+        posix_fadvise(file_id_, new_bottom, bottom_position_ - new_bottom, POSIX_FADV_WILLNEED);
     return 1;
 }
 
