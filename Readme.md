@@ -40,6 +40,20 @@ Le seul élément posant problème dans cet automate est le retour à l'état d�
 La solution est de garder la dernière lettre lue et de revenir au début pour analyser à nouveau la lettre F.
 Pour le reste, le parcours se fait en temps linéaire O(n) sans avoir besoin de revenir en arrière.
 
+## Outil de test
 
+Un outil de génération aléatoire de fichiers ``file_generator`` d'une taille et d'un offset précis se trouve dans le sous-répertoire ``tests``.
+Lorsque l'offset est derrière la fin de fichier, ``file_generator`` ajoute des sous-chaînes de ``\n%%EOF`` aléatoirement dans le fichier.
 
+La compilation de l'outil de test se fait avec:
+
+```bash
+bazel build //tests:file_generator
+```
+
+Un script de test en Python permet de lancer plusieurs tests sur des fichiers de diverses tailles:
+
+```bash
+./test_script.py
+```
 
