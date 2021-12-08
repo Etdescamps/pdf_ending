@@ -2,15 +2,17 @@
 #include <cstdlib>
 #include "tests/random_file.hh"
 
-void create_randomfile(const std::string &filename, size_t size, size_t offset) {
+void create_randomfile(const std::string &filename, size_t size, int64_t offset) {
     RndFile::RandomFile file(filename, size);
     std::string str("\n%%EOF");
-    if(offset < size - 20) {
-        int imax = int(str.length() - 1);
-        for(int i = 1; i < imax; ++i)
-            file.write_string((std::rand() % (size - offset - 16)) + offset + 6,str.substr(i));
+    if(offset >= 1) {
+        if(offset < int64_t(size) - 20) {
+            int imax = int(str.length() - 1);
+            for(int i = 1; i < imax; ++i)
+                file.write_string((std::rand() % (size - offset - 16)) + offset + 6, str.substr(i));
+        }
+        file.write_string(offset-1, str);
     }
-    file.write_string(offset-1, str);
     file.close();
 }
 
